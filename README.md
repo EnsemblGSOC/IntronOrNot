@@ -1,7 +1,4 @@
-# Google Summer of Code 2023 
-# Differentiating Real and Misaligned Introns with Machine Learning
-
-<hr/>
+# Google Summer of Code 2023: <br/> Differentiating Real and Misaligned Introns with Machine Learning
 
 ## Organisation
 Genome Assembly and Annotation (European Bioinformatics Institute / EMBL-EBI)
