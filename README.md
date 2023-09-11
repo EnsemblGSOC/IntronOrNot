@@ -6,7 +6,7 @@ To address issue that strict filters rejects most of the legitimate introns,
 we developed IntronOrNot (ION) - a machine learning to differentiate that predicts
 if the intron is real or misaligned. The model accepts coordinates, .bed, and .gtf file as input.
 The prediction script is easy to use and achieved comparable results
-to sequenced-based deep learning intron predictor. A standalone function
+to sequence-based deep learning intron predictor. A standalone function
 that extracts intron from .gtf is also included.
 
 
