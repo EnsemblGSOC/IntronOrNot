@@ -1,11 +1,49 @@
 # Google Summer of Code 2023: <br/> Differentiating Real and Misaligned Introns with Machine Learning
-## Organisation
+![Static Badge](https://img.shields.io/badge/licence-MIT-blue)
+![Static Badge](https://img.shields.io/badge/Python-3.10-orange)
+
+To address issue that strict filters rejects most of the legitimate introns,
+we developed IntronOrNot (ION) - a machine learning to differentiate that predicts
+if the intron is real or misaligned. The model accepts coordinates, .bed, and .gtf file as input.
+The prediction script is easy to use and achieved comparable results
+to sequenced-based deep learning intron predictor. A standalone function
+that extracts intron from .gtf is also included.
+
+
+# Table of Contents
+- [Organisation & Mentors](#organisation)
+- [Getting Started](#getting-started)
+  - [Usage](#usage)
+- [Background](#background)
+  - [Project Goal](#goal)
+- [Training Set Preparation](#training-set)
+  - [Positive Class Data](#pos-trainset)
+  - [Negative Class Data](#neg-trainset)
+- [Feature Engineering](#feature-eng)
+  - [Features Tested](#feature-tested)
+  - [Feature Selection](#feature-selection)
+- [Machine Learning Model](#ml-model)
+  - [Model Architecture](#model-arc)
+  - [Hyperparameter Optimisation](#hyperparam-opt)
+  - [Training](#model-training)
+  - [Evaluation Metrics](#model-eval)
+  - [Feature Importance using SHAP (SHapley Additive exPlanations)](#shap)
+  - [Prediction Explanation](#pred-expl)
+- [Results](#results)
+  - [10-Fold Stratified Cross Validation](#cross-val)
+  - [External Validation & Benchmark](#external-val)
+  - [Summary](#test-summary)
+- [Challenges, Limitations, and Future Work](#challenges-limitation-and-future-work)
+- [Conclusion](#conclusion)
+- [Acknowledgements and Remarks](#remarks)
+
+# <a name="organisation"></a>Organisation & Mentors
 Genome Assembly and Annotation (European Bioinformatics Institute / EMBL-EBI)
 
-## Research Group
+### Research Group
 Ensembl - <a href="https://www.ebi.ac.uk/about/teams/genome-interpretation/">Genome Interpretation Teams</a>
 
-## Mentors
+### Mentors
 <a href="https://www.ebi.ac.uk/people/person/jose-manuel-gonzalez-martinez/">Jose Gonzalez</a><br/>
 <a href="https://www.ebi.ac.uk/people/person/jonathan-mudge/">Jonathan Mudge</a><br/>
 <a href="https://www.ebi.ac.uk/people/person/adam-frankish/">Adam Frankish</a>
@@ -14,17 +52,17 @@ Ensembl - <a href="https://www.ebi.ac.uk/about/teams/genome-interpretation/">Gen
 
 ![](imgs_readme/ga.png)
 
-# Getting Started
+# <a name="getting-started"></a>Getting Started
 ### Installation
 - Download the latest zipped script in `Releases`
 - Install the required dependencies detailed below
 
-###  Environment
+###  <a name="enviroment"></a>Environment
 - 32 GB of RAM or more is required for a large .bed file
 - Multi-thread support is default to enabled with the Pandarallel library
 
-### Package Requirements
-**Please Note that this requirement is for the ION script in `Releases`, not the notebooks**\
+### <a name="package-req"></a>Package Requirements
+**Please Note that this requirement is for the final ION script in `Releases`, not the notebooks**\
 <br/>
 biopython==1.81\
 matplotlib==3.5.2\
@@ -36,23 +74,53 @@ pyfaidx==0.7.2.1\
 scikit_learn==1.1.1\
 shap==0.41.0\
 tqdm==4.64.0\
-xgboost==1.6.2\
+xgboost==1.6.2
 
-## Usage
-Coordinate mode:
+**Please Note that this requirement is for the ION script in `Releases`, not the notebooks**\
+
+## <a name="usage"></a>Usage
+Usage and options
 ```
-python3 ION.py --mode standard --shap false --type coords chr12 126729967 126732342 -
+ION.py [-h] --type {coord,gtf,bed} [-f FILE] [--shap SHAP] [--mode {standard,high-recall,high-precision,s,r,p}] [chr] [start] [end] [strand]
+
+positional arguments:
+  chr                   Chromosome name
+  start                 Start position
+  end                   End position
+  strand                Strand (either + or -)
+
+options:
+  -h, --help            show this help message and exit
+  --type {coord,gtf,bed}
+                        Mode of operation
+  -f FILE, --file FILE  Path to GTF/BED file
+  --shap SHAP           True if you want SHAP (explanation of predicted result) plot, otherwise False. Defaulted to True for coord and False for bed/gtf mode
+  --mode {standard,high-recall,high-precision,s,r,p}
+                        Either standard high-recall or high-precision, defaulted to high-precision
+```
+
+Coordinate mode (1-based):
+```
+$ python3 ION.py --mode high-precision --type coord chr3 83979030 83990643 +
+
+  
+Running ION in high-precision mode, Output will be stored at:  output/run_1694416785
+-----------------Results--------------------                                                                                                                                                                                                                                                                                                                                                                                   
+Prediction Results: 0.24998539686203003
+             Class: Rejected
+--------------------------------------------
 ``` 
 BED mode:
 ```
-python3 ION.py --mode standard --type bed --file ../../benchmarking/annotators_checked_introns.bed
+python3 ION.py --mode high-precision --type bed --file examples/example.bed 
 ``` 
 GTF mode:
 ```
-TBC
+python3 ION.py --mode high-precision --type gtf --file examples/example.gtf
 ``` 
+IMPORTANT: ION can only evaluate intorns with canonical splice-site (GT:AG, GC:AG, AT:AC)
 
-# Background
+# <a name="background"></a>Background
 Understanding the impact of genetic variation on disease requires comprehensive gene annotation.
 Human genes are well characterised following more than two decades of work on their annotation, however,
 we know that this annotation is not complete and that new experimental methods are generating data
@@ -68,7 +136,7 @@ improving the rule-set used in the automated workflow.
 
 You can read more about the background of this project at: https://github.com/jmgonzmart/GSoC_ML_gene_annot
 
-## Project Goal
+## <a name="goal"></a>Project Goal
 This project consists of the following deliverables and goals:
 - Install/prepare the environment and repository for the project.
 - Extract the GENCODE annotation data and featurize them into tabular format.
@@ -80,22 +148,22 @@ model.
 decision-making.
 - Run the final model on novel transcripts and produce a detailed report of the results.
 
-# Training Set Preparation
+# <a name="training-set"></a>Training Set Preparation
 
-## Positive Class Data 
+## <a name="pos-trainset"></a>Positive Class Data
 
 Relevant Notebook: [01](01_extract_introns_from_gencode.ipynb)
 
 We used the GENCODE v44 (https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_44/) as our positive set. We
 used a script to extract all the introns out of the .gtf file.
 
-## Negative Class Data
+## <a name="neg-trainset"></a>Negative Class Data
 
 Relevant Notebook: [02](02_extract_negative_introns.ipynb), [03](03_generating_false_introns.ipynb), [04](04_combining_positive_and_negative_train_set.ipynb)
 
 We used two source for generating negative class data.
 
-- We have access to a previously gene annotators' manually reviewed data, the dataset contains ~11000 introns, after removing introns that are already accepted in current version, 403 negative introns were obtained.
+- We have access to a previous gene annotators' manually reviewed data, the dataset contains ~11000 introns, after removing introns that are already accepted in current version, 403 negative introns were obtained.
 
 - To simulate how false intron data could be presented in real data, we ultilized [PBSIM3](https://academic.oup.com/nargab/article/4/4/lqac092/6855700) (Ono et al., 2022), a simulator for long-read sequencers that
 is capable to simulate both PacBio RS II continuous long reads (CLR) and Oxford Nanopore Technology (ONT) reads. We simulated the reads using GENCODE v44 `Long non-coding RNA transcript sequences` and `Protein-coding transcript sequences` RNA data. We simulated them using four different settings:
@@ -108,8 +176,8 @@ The reads were then aligned to the human genome respectively using [Minimap2](ht
 compared against the current GENCODE annotation and those that were not in the current GENCODE annotation is treated as false/misaligned introns. 
 About 110,000 false introns were obtained.
 
-# Feature Engineering
-## Features Tested
+# <a name="feature-eng"></a>Feature Engineering
+## <a name="feature-tested"></a>Features Tested
 9 categories of features were generated:
 - Recount3 score: [Notebook 05](05_trainset_recount3_feature.tsv)
   - Based on the data extracted from the intronic region of `recount3: summaries and queries for large-scale RNA-seq expression and splicing` (Wilks et al.)
@@ -131,7 +199,7 @@ About 110,000 false introns were obtained.
 - Branch Point Prediction (BPP) score: [Notebook 14](14_trainset_BPP_score_feature.tsv)
   - Branch point prediction using [BPP](https://doi.org/10.1093/bioinformatics/btx401) (Zhang el al.)
 
-## Feature Selection
+## <a name="feature-selection"></a>Feature Selection
 Relevant Notebook: [17](17_feature_selection.ipynb)
 
 To make the model easier to interpret, and improve its performance. We simplify the model using feature selection.
@@ -148,12 +216,12 @@ We also dropped the `sc` feature which is generated by the BPP script, as it has
 
 24 features were chosen. Refer to the second last cell of [Notebook 17](17_feature_selection.ipynb) for more details.
 
-# Machine Learning Model
-## Model Architecture
+# <a name="ml-model"></a>Machine Learning Model
+## <a name="model-arc"></a>Model Architecture
 We have tested different model architecture including Explainable Boosting Machine (EBM), RandomForest (RF), and more. We
 chose XGBoost as the model for this task for its good performance in internal validation.
 
-## Hyperparameter Optimisation
+## <a name="hyperparam-opt"></a>Hyperparameter Optimisation
 Relevant Notebook: [18](18_hyperparameter_optimisation.ipynb)
 
 We chose the hyperparameter the XGBoost model using exhaustive grid searching with 3-fold cross-validation of the following parameter:
@@ -167,35 +235,118 @@ parameter_grid = {
     'colsample_bytree': [0.8, 0.9, 1.0]
 }
 ```
-The selected parameters and the details could be found in [Notebook 18](18_hyperparameter_optimisation.ipynb).
+The best parameters were combinations with `learning_rate = 0.1`, however after consideration our model has limited
+training data, a learning rate with 0.1 will have a potential problem of overwriting, after evaluating different
+combinations with internal validation, we opted to use `{'colsample_bytree': 0.9, 'learning_rate': 0.01, 'max_depth': 7, 'min_child_weight': 1, 'n_estimators': 200, 'subsample': 0.8}`,
+which is the highest combination with `learning_rate = 0.01`.
 
-## Training
-We trained a standard model and a strict model.
-- Standard Model
-  - Uses `scale_pos_weight = 0.25` in the XGBoost parameter
-- Strict Model
-  - Uses `scale_pos_weight = 0.15` in the XGBoost parameter
-  - Decision border scaled up to 0.8 (from conventionally 0.5)
+## <a name="model-training"></a>Training
 
-## Evaluation Metrics
-The model's performance should be evaluated using metrics that consider both classes, metrics such as accuracy could be misleading due to the high
-number of true positives, especially during the training/internal-validation process.
+Relevant Notebook: [19a](19a_standard_model_building.ipynb), [19b](19b_strict_model_building.ipynb)
+
+We trained three separate model with the same parameter except for the `scale_pos_weight`. According to the xgboost 
+documentation, it "control the balance of positive and negative weights, useful for unbalanced classes. A typical value 
+to consider: sum(negative instances) / sum(positive instances)", after internal cross-validation, we settled on: 
+- **High-Recall Mode**
+  - `scale_pos_weight = sum(negative instances) / sum(positive instances)`
+- **Standard Mode**
+  - `scale_pos_weight = sum(negative instances) / sum(positive instances) / 2`
+- **High-Precision Mode**
+  - `scale_pos_weight = sum(negative instances) / sum(positive instances) / 4`
+
+## <a name="model-eval"></a>Evaluation Metrics
+The model's performance should be evaluated using metrics that consider both classes, metrics such as MCC should be emphasised.
+We will evaluate our model using these metrics:
 - Matthews Correlation Coefficient (MCC)
+- Accuracy (Acc)
 - Balanced Accuracy (BAcc)
 - False Positive Rate (FPR)
   - This is espicially important because we need to ensure the model does not produce false positive
-- Area Under Receiver Operating Characteristic Curve (AUROC) 
+- Area Under Receiver Operating Characteristic Curve (AUROC)
 
-# Results
-## Internal Validation & Benchmark
-## External Validation & Benchmark
-## Summary
+## <a name="shap"></a>Feature Importance using SHAP (SHapley Additive exPlanations) 
+One of the primary objectives of this project is to gain a deeper understanding of the significance of various features,
+knowledge that could be leveraged to enhance existing filters. Gaining insights into the model's performance is not merely beneficial but crucial.
+A more interpretable model could substantially contribute to more informed and effective decision-making processes.
 
-# Challenges
+We sampled 50% of the data (~240k entries) to examine the overall importance of features and how the value of features are affecting the model.\
+The color reflects the value of the feature, the order of the features (vertically) is the importance of it, and the x-axis reflects
+the impact on the model (SHAP value).
 
-## Conclusion
+![](imgs_readme/shap_comparison.png)
+![](imgs_readme/shap_comparison_2.png)
+We can see that recount3 score is the most important feature and from the first plot we can see that the model
+definitely favours entries with high recount3 score. One interesting finding is that phyloP or the phastCon score
+is also an important feature, as it was not incorporated in the original filters used by the annotation team, this
+could also be considered.
 
-# Acknowledgements and Remarks
+
+## <a name="pred-expl"></a>Prediction Explanation
+
+You can export and view the explanation for the prediction using `--shap true` option, it is also defaulted to true in coordinates mode
+
+### Example plot:
+![](imgs_readme/example_waterfall_explanation.png)
+
+# <a name="results"></a>Results
+
+Relevant Notebook: [20a](20a_external_benchmarking.ipynb), [20b](20b_external_benchmarking_gencode.ipynb)
+
+## <a name="cross-val"></a>10-Fold Stratified Cross Validation
+Standard Deviation (SD) of the folds are presented as the value after ±, only the first s.f. are shown in SD.
+
+|                           | Accuracy | B. Accuracy | FPR   | MCC   | AUROC<sub>score</sub> | Precision | Recall |
+|---------------------------|----------|-------------|-------|-------|-----------------------|-----------|--------|
+| ION (High-Recall Mode)    | 0.949    | 0.937       | 0.083 | 0.836 | 0.980                 | 0.982     | 0.956  |
+| ION (Standard Mode)       | 0.933    | 0.933       | 0.068 | 0.800 | 0.980                 | 0.984     | 0.933  |
+| ION (High-Precision Mode) | 0.894    | 0.917       | 0.046 | 0.722 | 0.980                 | 0.989     | 0.881  |
+
+We can see that adjusting the `scale_pos_weight` parameter of the model allows us to lower to FPR (while sacrificing the overall predictive performance (indicated by MCC and Recall))
+
+## <a name="external-val"></a>External Validation & Benchmark
+### Manually annotated lncRNA test-set
+|                           | Acc       | B. Acc    | FPR       | MCC       | AUROC<sub>score</sub> | Precision | Recall    |
+|---------------------------|-----------|-----------|-----------|-----------|-----------------------|-----------|-----------|
+| ION (High-Recall Mode)    | **0.860** | 0.724     | 0.443     | **0.361** | **0.858**             | 0.952     | **0.890** |
+| ION (Standard Mode)       | 0.742     | **0.784** | 0.165     | 0.351     | 0.851                 | 0.978     | 0.732     |
+| ION (High-Precision Mode) | 0.429     | 0.673     | **0.028** | 0.210     | 0.855                 | **0.992** | 0.374     |
+| Filters (Intropolis)      | 0.366     | 0.633     | 0.040     | 0.171     | 0.633                 | 0.987     | 0.306     |
+| Filters (Recount3)        | 0.701     | 0.654     | 0.403     | 0.191     | 0.654                 | 0.946     | 0.711     |
+| SPLAM<sup>1</sup>         | 0.483     | 0.674     | 0.091     | 0.205     | 0.831                 | 0.674     | 0.674     |
+
+1. True if both Donor score and Acceptor score >= 0.5 else false, actual predicted value (for calculating AUROC) is calculated by using the min(donor_score, acceptor_score).
+
+### GENCODE v46 Newly Added Introns
+As only single class is available (accepted/positive), only accuracy is included
+
+|                           | Accuracy  |
+|---------------------------|-----------|
+| ION (High-Recall mode)    | **0.844** |
+| ION (Standard Mode)       | 0.708     |
+| ION (High-Precision Mode) | 0.601     |
+| SPLAM<sup>1</sup>         | 0.772     |
+
+1. True if both Donor score and Acceptor score >= 0.5 else false
+
+## <a name="test-summary"></a>Benchmarking Summary
+Comparing the models, all mode of ION performs as good as or better than current filters and as good as SPLAM in most metrics.
+It is important to note that we only have limited negative data to fully benchmark the FPR performance of all models.
+And the lncRNA dataset is also arguably a relatively hard external test set for all models. 
+
+# <a name="challenges-limitation-and-future-work"></a>Challenges, Limitations, and Future Work
+There are rumours challenges in this project. Most notably is the imbalance of the training data, as the majority of the data
+are obtained by extracting introns from annotation, this makes the majority of the train-set "positive". This causes a huge
+problem at the beginning, although we dampen it with the generation of false data, the ration of positive vs negative is still
+around 4:1, a better model could be built with the generation of more false introns, presumably sets accumulated by annotators
+or a more comprehensive simulation of introns using the method utilised in this project.
+
+# <a name="conclusion"></a>Conclusion
+We have successfully developed a model ION that predicts the legitimacy of an intron. The performance of ION is comparable
+to deep learning methods such as SpliceAI and SPLAM, while still being interpretable. This would allow annotators and users
+to use this program to evaluate introns and understand the decision behind it. Many improvements could be make to improve
+this model including generating higher quality "negative" introns and further tuning and experimenting with other features and models.
+
+# <a name="remarks"></a>Acknowledgements and Remarks
 
 I am truly grateful for the unwavering support I've received throughout the course of this project from the mentors.
 Despite an initial slow start, my mentors have been incredibly supportive, providing invaluable guidance
