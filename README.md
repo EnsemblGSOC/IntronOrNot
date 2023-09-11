@@ -51,6 +51,7 @@ Ensembl - <a href="https://www.ebi.ac.uk/about/teams/genome-interpretation/">Gen
 # Graphical Abstract
 
 ![](imgs_readme/ga.png)
+<p style="text-align: right;">Created with BioRender.com</p>
 
 # <a name="getting-started"></a>Getting Started
 ### Installation
@@ -295,6 +296,9 @@ You can export and view the explanation for the prediction using `--shap true` o
 
 Relevant Notebook: [20a](20a_external_benchmarking.ipynb), [20b](20b_external_benchmarking_gencode.ipynb)
 
+We tested the tree mode of ION and compared it with the two filters provided by the annotators, and also compared it
+to [SPLAM](https://doi.org/10.1101/2023.07.27.550754) (Chao et al., 2023).
+
 ## <a name="cross-val"></a>10-Fold Stratified Cross Validation
 Standard Deviation (SD) of the folds are presented as the value after ±, only the first s.f. are shown in SD.
 
@@ -307,7 +311,7 @@ Standard Deviation (SD) of the folds are presented as the value after ±, only t
 We can see that adjusting the `scale_pos_weight` parameter of the model allows us to lower to FPR (while sacrificing the overall predictive performance (indicated by MCC and Recall))
 
 ## <a name="external-val"></a>External Validation & Benchmark
-### Manually annotated lncRNA test-set
+### Manually annotated lncRNA test-set (Table 1)
 |                           | Acc       | B. Acc    | FPR       | MCC       | AUROC<sub>score</sub> | Precision | Recall    |
 |---------------------------|-----------|-----------|-----------|-----------|-----------------------|-----------|-----------|
 | ION (High-Recall Mode)    | **0.860** | 0.724     | 0.443     | **0.361** | **0.858**             | 0.952     | **0.890** |
@@ -319,8 +323,8 @@ We can see that adjusting the `scale_pos_weight` parameter of the model allows u
 
 1. True if both Donor score and Acceptor score >= 0.5 else false, actual predicted value (for calculating AUROC) is calculated by using the min(donor_score, acceptor_score).
 
-### GENCODE v46 Newly Added Introns
-As only single class is available (accepted/positive), only accuracy is included
+### GENCODE v46 Newly Added Introns (Table 2)
+As only single class is available (accepted/positive), only accuracy is included.
 
 |                           | Accuracy  |
 |---------------------------|-----------|
@@ -332,20 +336,43 @@ As only single class is available (accepted/positive), only accuracy is included
 1. True if both Donor score and Acceptor score >= 0.5 else false
 
 ## <a name="test-summary"></a>Benchmarking Summary
-Comparing the models, all mode of ION performs as good as or better than current filters and as good as SPLAM in most metrics.
-It is important to note that we only have limited negative data to fully benchmark the FPR performance of all models.
-And the lncRNA dataset is also arguably a relatively hard external test set for all models. 
+
+Table 1 provides a comparative evaluation of different machine learning models designed to classify long non-coding
+RNAs (lncRNAs) based on a manually annotated test set. Among the models, ION in High-Recall Mode stands out for its superior
+performance across multiple metrics: it boasts the highest accuracy (0.860), Matthews Correlation Coefficient (0.361), and
+AUROC score (0.858). It also excels in recall with a rate of 0.890, suggesting that it is particularly effective at correctly
+identifying positive cases. However, this high recall comes at the expense of a higher False Positive Rate (FPR) of 0.443,
+indicating that the model also incorrectly classifies a considerable number of negative cases as positive.
+<br/><br/>
+ION in Standard Mode achieves the highest Balanced Accuracy of 0.784 and maintains a relatively low FPR of 0.165,
+offering a balanced performance between sensitivity and specificity. ION in High-Precision Mode excels in precision
+with a score of 0.992 and has the lowest FPR of 0.028, but lags in recall and overall accuracy. Filters (Intropolis)
+and Filters (Recount3) generally perform lower across most metrics, while SPLAM<sup>1</sup> shows moderate results.
+Each model appears to have its strengths and weaknesses, providing options to choose based on the specific requirements
+of an lncRNA classification task.
+<br/><br/>
+Table 2 provides comparison of models. As only accepted data are available in GENCODE, we can only compare their accuracy,
+we can see that the high-recall mode of ION has the best accuracy, while other both the standard and high-precision mode suffered
+from relatively low accuracy compared to SPLAM, which achieved 77.2%.
 
 # <a name="challenges-limitation-and-future-work"></a>Challenges, Limitations, and Future Work
-There are rumours challenges in this project. Most notably is the imbalance of the training data, as the majority of the data
+There are numerous challenges in this project. Most notably is the imbalance of the training data, as the majority of the data
 are obtained by extracting introns from annotation, this makes the majority of the train-set "positive". This causes a huge
 problem at the beginning, although we dampen it with the generation of false data, the ration of positive vs negative is still
 around 4:1, a better model could be built with the generation of more false introns, presumably sets accumulated by annotators
 or a more comprehensive simulation of introns using the method utilised in this project.
 
+The performance of the machine learning model is limited to the training data, although recount3 is the most comprehensive dataset available to this data,
+in the future, model should be retrained and adjusted in accordance to the newer data.
+
+ION is built on many experimental and empirical data, like recount3 score, repeat regions, and conservation scores. On the other hand, there are
+tools that predicts introns using the sequence alone, such as SpliceAI and SPLAM. Future work could expan on integrating both sequence-based
+intron prediction and experimental data. Additionally, the recent development in protein structure predict might allow us to incorporate structural
+prediction of the actual protein (analysis the legitimacy of introns using the final structure of the protein).
+
 # <a name="conclusion"></a>Conclusion
 We have successfully developed a model ION that predicts the legitimacy of an intron. The performance of ION is comparable
-to deep learning methods such as SpliceAI and SPLAM, while still being interpretable. This would allow annotators and users
+to deep learning methods such as SPLAM, while still being interpretable. This would allow annotators and users
 to use this program to evaluate introns and understand the decision behind it. Many improvements could be make to improve
 this model including generating higher quality "negative" introns and further tuning and experimenting with other features and models.
 
