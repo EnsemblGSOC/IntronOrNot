@@ -64,6 +64,7 @@ Ensembl - <a href="https://www.ebi.ac.uk/about/teams/genome-interpretation/">Gen
 ### <a name="package-req"></a>Package Requirements
 **Please Note that this requirement is for the final ION script in `Releases`, not the notebooks**\
 <br/>
+bcbio_gff==0.7.0
 biopython==1.81\
 matplotlib==3.5.2\
 numpy==1.25.0\
