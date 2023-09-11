@@ -261,6 +261,8 @@ We will evaluate our model using these metrics:
 - Matthews Correlation Coefficient (MCC)
 - Accuracy (Acc)
 - Balanced Accuracy (BAcc)
+- Precision
+- Recall
 - False Positive Rate (FPR)
   - This is espicially important because we need to ensure the model does not produce false positive
 - Area Under Receiver Operating Characteristic Curve (AUROC)
