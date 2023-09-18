@@ -181,24 +181,25 @@ About 110,000 false introns were obtained.
 # <a name="feature-eng"></a>Feature Engineering
 ## <a name="feature-tested"></a>Features Tested
 9 categories of features were generated:
-- Recount3 score: [Notebook 05](05_trainset_recount3_feature.tsv)
+- Recount3 score: [Notebook 05](05_recount3_feature.ipynb)
   - Based on the data extracted from the intronic region of `recount3: summaries and queries for large-scale RNA-seq expression and splicing` (Wilks et al.)
-- Repeat region: [Notebook 06](06_trainset_repeat_feature.tsv)
+- Repeat region: [Notebook 06](06_repeat_region_feature.ipynb)
   - Check if any of the splice-sites lies in repeating regions.
-- Antisense Exon: [Notebook 07](07_trainset_antisense_feature.tsv)
-- Distance of next nearest existing splice-site: [Notebook 09](09_trainset_nearest_alt_ss_dist_feature)
+- Antisense Exon: [Notebook 07](07_antisense_feature.ipynb)
+- Distance of next nearest existing splice-site: [Notebook 09](09_nearest_alternative_splice_site_distance_feature.ipynb)
   - Check the coordinate of both the donor and acceptor splice-site against current annotation (GENCODE v44) and calculate the distance between the splice site and the closest annotated splice-site nearby (excluding exact match).
-- MaxEntScan score: [Notebook 10](10_trainset_MaxEntScan_feature.tsv)
+- MaxEntScan score: [Notebook 10](10_maxentscan_score_feature.ipynb)
   - Based on the script/methodology developed by Yeo and Burge - `Maximum entropy modeling of short sequence motifs with applications to RNA splicing signals`
-- Basic sequence based feature: [Notebook 11](11_trainset_basic_features.tsv)
+- Basic sequence based feature: [Notebook 11](11_basic_sequence_features.ipynb)
+  - The process of pairing the sequence with the introns could be found in [Notebook 08](08_pairing_with_hg38.ipynb)
   - Calculates the GC content.
   - Determines whether the sequence can be considered a CpG island based on the ratio of CpG dinucleotides and the GC content in the sequence.
   - Calculates the intron length.
-- Conservation scores: [Notebook 12](12_trainset_conservation_scores_feature.tsv)
+- Conservation scores: [Notebook 12](12_conservation_scores_feature.ipynb)
   - Calculate the splice-site conservation scores with the [PhastCon](https://doi.org/10.1101/gr.3715005) and [PhyloP](https://doi.org/10.1101%2Fgr.097857.109) conservation resources downloaded from the [UCSC genome browser](https://doi.org/10.1093%2Fbib%2Fbbs038).
-- Splice-site with better Recount3 score nearby: [Notebook 13](13_recount3_near_ss_with_better_score_feature.tsv)
+- Splice-site with better Recount3 score nearby: [Notebook 13](13_ recount3_near_ss_with_better_score_feature .ipynb)
   - We look at 5nt further at both direction of the splice-site and see if there is a splice-site recorded in recount3 that has a better score
-- Branch Point Prediction (BPP) score: [Notebook 14](14_trainset_BPP_score_feature.tsv)
+- Branch Point Prediction (BPP) score: [Notebook 14](14_BPP_prediction_feature.ipynb)
   - Branch point prediction using [BPP](https://doi.org/10.1093/bioinformatics/btx401) (Zhang el al.)
 
 ## <a name="feature-selection"></a>Feature Selection
