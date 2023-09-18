@@ -63,22 +63,76 @@ Ensembl - <a href="https://www.ebi.ac.uk/about/teams/genome-interpretation/">Gen
 - Multi-thread support is default to enabled with the Pandarallel library
 
 ### <a name="package-req"></a>Package Requirements
-**Please Note that this requirement is for the final ION script in `Releases`, not the notebooks**\
-<br/>
-bcbio_gff==0.7.0\
-biopython==1.81\
-matplotlib==3.5.2\
-numpy==1.25.0\
-pandarallel==1.6.5\
-pandas==2.0.3\
-pyBigWig==0.3.22\
-pyfaidx==0.7.2.1\
-scikit_learn==1.1.1\
-shap==0.41.0\
-tqdm==4.64.0\
-xgboost==1.6.2
+**!! Please Note that this requirement is for the final ION script in `Releases`, not the notebooks**\
 
-**Please Note that this requirement is for the ION script in `Releases`, not the notebooks**\
+Please see the [enviroment.yml](release/ION_version_1.0.0/environment.yml)
+
+<details>
+  <summary>View enviroment.yml</summary>
+<pre>name: ion
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - _libgcc_mutex=0.1
+  - _openmp_mutex=4.5
+  - bzip2=1.0.8
+  - ca-certificates=2023.7.22
+  - ld_impl_linux-64=2.40
+  - libffi=3.4.2
+  - libgcc-ng=13.2.0
+  - libgomp=13.2.0
+  - libnsl=2.0.0
+  - libsqlite=3.43.0
+  - libuuid=2.38.1
+  - libzlib=1.2.13
+  - ncurses=6.4
+  - openssl=3.1.2
+  - pip=23.2.1
+  - python=3.10.12
+  - readline=8.2
+  - setuptools=68.2.2
+  - tabix=0.2.6
+  - tk=8.6.12
+  - wheel=0.41.2
+  - xz=5.2.6
+  - zlib=1.2.13
+  - pip:
+    - bcbio-gff==0.7.0
+    - biopython==1.81
+    - cloudpickle==2.2.1
+    - contourpy==1.1.1
+    - cycler==0.11.0
+    - dill==0.3.7
+    - fonttools==4.42.1
+    - joblib==1.3.2
+    - kiwisolver==1.4.5
+    - llvmlite==0.40.1
+    - matplotlib==3.8.0
+    - numba==0.57.1
+    - numpy==1.24.4
+    - packaging==23.1
+    - pandarallel==1.6.5
+    - pandas==1.5.3
+    - pillow==10.0.1
+    - psutil==5.9.5
+    - pybigwig==0.3.22
+    - pyfaidx==0.7.2.1
+    - pyparsing==3.1.1
+    - python-dateutil==2.8.2
+    - pytz==2023.3.post1
+    - scikit-learn==1.1.1
+    - scipy==1.11.2
+    - shap==0.42.1
+    - six==1.16.0
+    - slicer==0.0.7
+    - threadpoolctl==3.2.0
+    - tqdm==4.66.1
+    - tzdata==2023.3
+    - xgboost==1.6.2
+</pre>
+</details>
 
 ## <a name="usage"></a>Usage
 Usage and options
