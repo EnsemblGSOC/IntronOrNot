@@ -244,7 +244,7 @@ which is the highest combination with `learning_rate = 0.01`.
 
 ## <a name="model-training"></a>Training
 
-Relevant Notebook: [19a](19a_standard_model_building.ipynb), [19b](19b_strict_model_building.ipynb)
+Relevant Notebook: [19a](19a_high_recall_model_building.ipynb), [19b](19b_standard_model_building.ipynb), [19c](19c_high_precision_model_building.ipynb)
 
 We trained three separate model with the same parameter except for the `scale_pos_weight`. According to the xgboost 
 documentation, it "control the balance of positive and negative weights, useful for unbalanced classes. A typical value 
