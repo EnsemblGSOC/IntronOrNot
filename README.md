@@ -251,7 +251,7 @@ About 110,000 false introns were obtained.
   - Calculates the intron length.
 - Conservation scores: [Notebook 12](12_conservation_scores_feature.ipynb)
   - Calculate the splice-site conservation scores with the [PhastCon](https://doi.org/10.1101/gr.3715005) and [PhyloP](https://doi.org/10.1101%2Fgr.097857.109) conservation resources downloaded from the [UCSC genome browser](https://doi.org/10.1093%2Fbib%2Fbbs038).
-- Splice-site with better Recount3 score nearby: [Notebook 13](13_ recount3_near_ss_with_better_score_feature .ipynb)
+- Splice-site with better Recount3 score nearby: [Notebook 13](13_recount3_near_ss_with_better_score_feature.ipynb)
   - We look at 5nt further at both direction of the splice-site and see if there is a splice-site recorded in recount3 that has a better score
 - Branch Point Prediction (BPP) score: [Notebook 14](14_BPP_prediction_feature.ipynb)
   - Branch point prediction using [BPP](https://doi.org/10.1093/bioinformatics/btx401) (Zhang el al.)
