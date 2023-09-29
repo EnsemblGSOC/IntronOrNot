@@ -293,7 +293,7 @@ parameter_grid = {
 }
 ```
 The best parameters were combinations with `learning_rate = 0.1`, however after consideration our model has limited
-training data, a learning rate with 0.1 will have a potential problem of overwriting, after evaluating different
+training data, a learning rate with 0.1 will have a potential problem of overfitting, after evaluating different
 combinations with internal validation, we opted to use `{'colsample_bytree': 0.9, 'learning_rate': 0.01, 'max_depth': 7, 'min_child_weight': 1, 'n_estimators': 200, 'subsample': 0.8}`,
 which is the highest combination with `learning_rate = 0.01`.
 
