@@ -355,8 +355,7 @@ Relevant Notebook: [20a](20a_external_benchmarking.ipynb), [20b](20b_external_be
 We tested the tree mode of ION and compared it with the two filters provided by the annotators, and also compared it
 to [SPLAM](https://doi.org/10.1101/2023.07.27.550754) (Chao et al., 2023).
 
-## <a name="cross-val"></a>10-Fold Stratified Cross Validation
-Standard Deviation (SD) of the folds are presented as the value after ±, only the first s.f. are shown in SD.
+## <a name="cross-val"></a>10-Fold Stratified Cross-Validation
 
 |                           | Accuracy | B. Accuracy | FPR   | MCC   | AUROC<sub>score</sub> | Precision | Recall |
 |---------------------------|----------|-------------|-------|-------|-----------------------|-----------|--------|
