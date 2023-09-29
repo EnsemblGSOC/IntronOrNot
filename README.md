@@ -56,7 +56,7 @@ Ensembl - <a href="https://www.ebi.ac.uk/about/teams/genome-interpretation/">Gen
 
 # <a name="getting-started"></a>Getting Started
 ### Installation
-- Download the latest zipped folder `ION_version_x.x.x-x.zip` in [releases](releases/tag/v0.1.0-alpha)
+- Download the latest zipped folder `ION_version_x.x.x-x.zip` in [releases](../releases/tag/v0.1.0-alpha)
 - Install the required [dependencies](release/ION_version_0.0.1-alpha/environment.yml) (see below)
 
 ###  <a name="enviroment"></a>Environment
