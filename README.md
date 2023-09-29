@@ -1,6 +1,7 @@
 # Google Summer of Code 2023: <br/> Differentiating Real and Misaligned Introns with Machine Learning
-![Static Badge](https://img.shields.io/badge/licence-MIT-blue)
-![Static Badge](https://img.shields.io/badge/Python-3.10-orange)
+![Static Badge](https://img.shields.io/badge/Licence-MIT-blue)
+![Static Badge](https://img.shields.io/badge/Python-3.10-yellow)
+![Static Badge](https://img.shields.io/badge/Release-0.0.1--alpha-red)
 
 To address issue that strict filters rejects most of the legitimate introns,
 we developed IntronOrNot (ION) - a machine learning to differentiate that predicts
