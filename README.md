@@ -56,12 +56,12 @@ Ensembl - <a href="https://www.ebi.ac.uk/about/teams/genome-interpretation/">Gen
 
 # <a name="getting-started"></a>Getting Started
 ### Installation
-- Download the latest zipped script in `Releases`
-- Install the required dependencies detailed below
+- Download the latest zipped folder `ION_version_x.x.x-x.zip` in [releases](releases/tag/v0.1.0-alpha)
+- Install the required [dependencies](release/ION_version_0.0.1-alpha/environment.yml) (see below)
 
 ###  <a name="enviroment"></a>Environment
 - 32 GB of RAM or more is required for a large .bed file
-- Multi-thread support is default to enabled with the Pandarallel library
+- Multi-thread support is defaulted to enabled with use of the Pandarallel library
 
 ### <a name="package-req"></a>Package Requirements
 **!! Please Note that this requirement is for the final ION script in `Releases`, not the notebooks**\
