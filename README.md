@@ -66,7 +66,7 @@ Ensembl - <a href="https://www.ebi.ac.uk/about/teams/genome-interpretation/">Gen
 ### <a name="package-req"></a>Package Requirements
 **!! Please Note that this requirement is for the final ION script in `Releases`, not the notebooks**\
 
-Please see the [enviroment.yml](release/ION_version_1.0.0/environment.yml)
+Please see the [enviroment.yml](release/ION_version_0.0.1-alpha/environment.yml)
 
 <details>
   <summary>View enviroment.yml</summary>
