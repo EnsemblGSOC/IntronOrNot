@@ -2,6 +2,7 @@
 [![Static Badge](https://img.shields.io/badge/Licence-MIT-blue)](LICENSE.txt)
 [![Static Badge](https://img.shields.io/badge/Python-3.10-yellow)](https://www.python.org/downloads/release/python-3100/)
 [![Static Badge](https://img.shields.io/badge/Release-0.0.1--alpha-red)](../../releases/tag/v0.1.0-alpha)
+[![DOI](https://zenodo.org/badge/651027401.svg)](https://doi.org/10.5281/zenodo.14607093)
 
 To address issue that strict filters rejects most of the legitimate introns,
 we developed IntronOrNot (ION) - a machine learning to differentiate that predicts
